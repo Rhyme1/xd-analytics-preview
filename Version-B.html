@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XyberDreams — Brand Analytics (B)</title>
+<style>
+  :root{
+    --ink:#16131f; --ink2:#494456; --muted:#857f93; --line:#e9e5f1;
+    --bg:#fbfafe; --card:#ffffff; --accent:#6d4dff; --accent-soft:#efeaff;
+    --green:#1f9d6b; --red:#cf4b4b; --shadow:0 1px 2px rgba(20,16,40,.04),0 10px 30px rgba(20,16,40,.06);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:940px;margin:0 auto;padding:40px 24px 60px}
+  h3{line-height:1.14;letter-spacing:-.022em;margin:0}
+  p{margin:0;color:var(--ink2)}
+  .view{display:none} .view[data-show="1"]{display:block}
+
+  .mock{background:#f5f3fb;border:1px solid var(--line);border-radius:18px;padding:24px}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}
+  .crumb{font-size:13px;color:var(--muted)} .crumb b{color:var(--ink)}
+  .crumb .bk{color:var(--accent);cursor:pointer;font-weight:600}
+
+  .abbtn{position:relative;font:600 12.5px/1 inherit;color:var(--ink2);background:#fff;border:1px solid var(--line);border-radius:9px;padding:8px 13px;cursor:pointer;white-space:nowrap}
+  .abbtn .g{display:inline-block;width:7px;height:7px;border-radius:50%;background:#c4bed4;margin-right:7px;vertical-align:middle}
+  body.abon .abbtn .g{background:var(--green)}
+  body.abon .abbtn .tx::after{content:" running"}
+  .abbtn .tip{visibility:hidden;opacity:0;transition:.15s;position:absolute;top:40px;right:0;width:236px;background:#16131f;color:#f2f0fa;font:12.5px/1.45 inherit;font-weight:400;padding:10px 12px;border-radius:9px;box-shadow:0 12px 30px rgba(0,0,0,.25);z-index:10;text-align:left}
+  .abbtn:hover .tip{visibility:visible;opacity:1}
+
+  /* intelligence hero */
+  .lead{background:#fff;border:1px solid var(--line);border-radius:15px;padding:22px 24px;margin-bottom:14px}
+  .lead .h{font-size:25px;font-weight:800;letter-spacing:-.024em;line-height:1.14}
+  .lead .s{font-size:14.5px;color:var(--ink2);margin-top:8px;max-width:640px}
+
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
+  @media(max-width:620px){.stats{grid-template-columns:1fr}}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 15px}
+  .stat .n{font-size:22px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .stat .l{font-size:12px;color:var(--muted);font-weight:600;margin-top:2px}
+
+  .blockh{font-size:13px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:22px 4px 10px}
+
+  .qlist{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden}
+  .qr{display:grid;grid-template-columns:1fr 92px;gap:12px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:center}
+  .qr:last-child{border-bottom:0}
+  .qr.flag{background:#fdf1f1}
+  .qr .q{font-size:14.5px;font-weight:600}
+  .qr .q .tagx{font-size:11px;font-weight:700;color:var(--red);margin-left:8px}
+  .qr .c{text-align:right;font-variant-numeric:tabular-nums;font-weight:700;color:var(--ink2)}
+  .qr .c small{color:var(--muted);font-weight:600;font-size:12px}
+  .insightline{display:flex;gap:11px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:13px;padding:15px 17px;margin-top:12px;font-size:15px}
+  .insightline .ic{color:var(--accent);font-weight:800} .insightline b{color:var(--ink)}
+
+  /* product table */
+  .ptable{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden}
+  .pth,.ptr{display:grid;grid-template-columns:1fr 80px 96px 130px;gap:14px;align-items:center;padding:13px 18px}
+  .pth{background:#f6f3fd;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+  .ptr{border-top:1px solid var(--line);cursor:pointer} .ptr:hover{background:#faf8ff}
+  .ptr .pn{font-size:15px;font-weight:600}
+  .pth .r,.ptr .num,.ptr .rate{text-align:right;font-variant-numeric:tabular-nums}
+  .ptr .num{font-weight:600;color:var(--ink2);font-size:14px}
+  .ptr .rate{font-size:16px;font-weight:800;color:var(--ink)}
+  .ptr .tq{text-align:right;font-size:13.5px;color:var(--ink2);font-weight:600}
+  .ptr.low .pn,.ptr.low .num,.ptr.low .rate,.ptr.low .tq{color:var(--muted);font-weight:600}
+  .ptr.low .rate{font-size:13px}
+
+  /* AB proof (brand-run, demoted) */
+  .proof{border:1px solid #d9cffb;border-radius:14px;padding:16px 18px;background:#faf8ff;margin-bottom:16px}
+  .proof .ph{font-size:12.5px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+  .arms{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:560px){.arms{grid-template-columns:1fr}}
+  .arm{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff}
+  .arm.xd{background:#f4f1ff;border-color:#ddd4fb}
+  .arm .who{font-size:13px;font-weight:700;margin-bottom:10px}
+  .arm .ratelbl{font-size:11.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .arm .rate{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+  .arm .sub{font-size:12.5px;color:var(--muted);margin-top:4px}
+  .ab-only{display:none} body.abon .ab-only{display:block}
+
+  /* modal */
+  .modal-bg{display:none;position:fixed;inset:0;background:rgba(20,16,40,.45);z-index:50;align-items:center;justify-content:center;padding:24px}
+  .modal-bg.show{display:flex}
+  .modal{background:#fff;border-radius:18px;max-width:460px;width:100%;padding:24px;box-shadow:0 30px 80px rgba(0,0,0,.3)}
+  .modal .mh{font-size:14px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;text-align:center;margin-bottom:16px}
+  .absplit{display:flex;align-items:stretch;gap:12px;margin-bottom:14px}
+  .abx{flex:1;border:1px solid var(--line);border-radius:13px;padding:20px 14px;text-align:center;background:#faf9fd}
+  .abx.xd{background:var(--accent-soft);border-color:#d9cffb}
+  .abx .pc{font-size:32px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums} .abx.xd .pc{color:var(--accent)}
+  .abx .pl{font-size:13px;color:var(--ink2);margin-top:8px;line-height:1.35}
+  .vs{align-self:center;font-size:12px;font-weight:800;color:var(--muted)}
+  .abrun{text-align:center;font-size:13px;color:var(--muted);margin-bottom:18px} .abrun b{color:var(--ink2)}
+  .row{display:flex;gap:10px;justify-content:center}
+  .btn{border:0;border-radius:10px;padding:12px 20px;font:700 14px/1 inherit;cursor:pointer}
+  .btn.primary{background:var(--accent);color:#fff} .btn.ghost{background:#f0eef7;color:var(--ink2)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ALL PRODUCTS -->
+  <div class="view" data-view="all" data-show="1">
+    <div class="mock">
+      <div class="topbar">
+        <div class="crumb"><b>All products</b> · 5 live experiences · last 30 days</div>
+        <button class="abbtn" onclick="openModal()"><span class="g"></span><span class="tx">A/B testing</span>
+          <span class="tip">Prove the experience against your old page. Your test, your numbers.</span></button>
+      </div>
+
+      <!-- brand-run proof, only when a test is on -->
+      <div class="proof ab-only">
+        <div class="ph">Your A/B test · the experience vs your old pages</div>
+        <div class="arms">
+          <div class="arm xd"><div class="who">The XyberDreams experience</div><div class="ratelbl">Add-to-cart rate</div><div class="rate" style="color:var(--accent)">9.6%</div><div class="sub">192 of 2,000 shoppers added to cart</div></div>
+          <div class="arm"><div class="who">Your original pages</div><div class="ratelbl">Add-to-cart rate</div><div class="rate" style="color:#6b6580">6.2%</div><div class="sub">124 of 2,000 shoppers added to cart</div></div>
+        </div>
+      </div>
+
+      <!-- intelligence hero -->
+      <div class="lead">
+        <div class="h">Your shoppers hesitate most on shipping.</div>
+        <div class="s">Shipping &amp; returns is the question they open most before leaving without buying — your delivery time or cost is the likely blocker. Shopify can't tell you this; we can.</div>
+      </div>
+
+      <div class="stats">
+        <div class="stat"><div class="n">3,910</div><div class="l">Visitors</div></div>
+        <div class="stat"><div class="n">8.1%</div><div class="l">Add-to-cart rate</div></div>
+        <div class="stat"><div class="n">5</div><div class="l">Live experiences</div></div>
+      </div>
+
+      <div class="blockh">Your products · what shoppers focus on</div>
+      <div class="ptable">
+        <div class="pth"><span>Product</span><span class="r">Visitors</span><span class="r">Cart rate</span><span class="r">Top question</span></div>
+        <div class="ptr" onclick="goOne()"><span class="pn">The Alpine Merino Sweater</span><span class="num">2,000</span><span class="rate">10.0%</span><span class="tq">How it fits</span></div>
+        <div class="ptr"><span class="pn">Wool Beanie</span><span class="num">720</span><span class="rate">8.4%</span><span class="tq">Sizing</span></div>
+        <div class="ptr"><span class="pn">Cashmere Scarf</span><span class="num">540</span><span class="rate">7.1%</span><span class="tq">What it's made of</span></div>
+        <div class="ptr"><span class="pn">Lambswool Cardigan</span><span class="num">510</span><span class="rate">4.2%</span><span class="tq">Shipping &amp; returns</span></div>
+        <div class="ptr low"><span class="pn">Merino Socks</span><span class="num">140</span><span class="rate">—</span><span class="tq">Gathering</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ONE PRODUCT -->
+  <div class="view" data-view="one" data-show="0">
+    <div class="mock">
+      <div class="topbar">
+        <div class="crumb"><span class="bk" onclick="goAll()">All products</span> › <b>The Alpine Merino Sweater</b> · last 30 days</div>
+        <button class="abbtn" onclick="openModal()"><span class="g"></span><span class="tx">A/B testing</span>
+          <span class="tip">Prove the experience against your old page. Your test, your numbers.</span></button>
+      </div>
+
+      <div class="proof ab-only">
+        <div class="ph">Your A/B test · day 12</div>
+        <div class="arms">
+          <div class="arm xd"><div class="who">The XyberDreams experience</div><div class="ratelbl">Add-to-cart rate</div><div class="rate" style="color:var(--accent)">10.0%</div><div class="sub">100 of 1,000 shoppers added to cart</div></div>
+          <div class="arm"><div class="who">Your original page</div><div class="ratelbl">Add-to-cart rate</div><div class="rate" style="color:#6b6580">6.4%</div><div class="sub">64 of 1,000 shoppers added to cart</div></div>
+        </div>
+      </div>
+
+      <div class="blockh">How shoppers evaluated this product</div>
+      <div class="qlist">
+        <div class="qr"><span class="q">“How does it fit?”</span><span class="c">312 <small>opens</small></span></div>
+        <div class="qr flag"><span class="q">“Shipping &amp; returns”<span class="tagx">biggest drop-off</span></span><span class="c">268 <small>opens</small></span></div>
+        <div class="qr"><span class="q">“What's it made of?”</span><span class="c">150 <small>opens</small></span></div>
+        <div class="qr"><span class="q">“How do I wash merino?”</span><span class="c">95 <small>opens</small></span></div>
+      </div>
+      <div class="insightline"><span class="ic">◆</span><div>Shoppers who open <b>Shipping &amp; returns</b> are the least likely to buy — your delivery time or cost is putting them off. Worth fixing on the page.</div></div>
+
+      <div class="stats" style="margin-top:18px">
+        <div class="stat"><div class="n">1,240</div><div class="l">Visitors</div></div>
+        <div class="stat"><div class="n">7.7%</div><div class="l">Add-to-cart rate</div></div>
+        <div class="stat"><div class="n">825</div><div class="l">Questions opened</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-bg" id="mbg">
+  <div class="modal">
+    <div class="mh" id="mh">Your A/B test</div>
+    <div class="absplit">
+      <div class="abx xd"><div class="pc">50%</div><div class="pl">see your XyberDreams experience</div></div>
+      <div class="vs">vs</div>
+      <div class="abx"><div class="pc">50%</div><div class="pl">see your traditional page</div></div>
+    </div>
+    <div class="abrun">Runs for <b>30 days</b> · same shoppers, same time</div>
+    <div class="row">
+      <button class="btn ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn primary" id="mact" onclick="toggleAB()">See the impact</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  function show(w){document.querySelectorAll('.view').forEach(v=>v.dataset.show=(v.dataset.view===w)?'1':'0');window.scrollTo({top:0,behavior:'smooth'})}
+  function goOne(){show('one')} function goAll(){show('all')}
+  function openModal(){const on=document.body.classList.contains('abon');document.getElementById('mh').textContent=on?'Your A/B test · running, day 12':'Your A/B test';document.getElementById('mact').textContent=on?'Stop test':'See the impact';document.getElementById('mbg').classList.add('show')}
+  function closeModal(){document.getElementById('mbg').classList.remove('show')}
+  function toggleAB(){document.body.classList.toggle('abon');closeModal()}
+  document.getElementById('mbg').addEventListener('click',e=>{if(e.target.id==='mbg')closeModal()});
+</script>
+</body>
+</html>
